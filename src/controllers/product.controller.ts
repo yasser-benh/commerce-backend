@@ -4,6 +4,7 @@ import {
 } from "../services/product.service";
 import { STATUS_CODES } from "../constants/STATUS_CODES";
 import Product from "../models/product.model";
+import productModel from "../models/product.model";
 
 export const addProductController = async (req: Request, res: Response): Promise<void> => {
   try {
@@ -39,7 +40,7 @@ export const editProductController = async (
     const { name, price, description } = req.body;
     const sellerId = req.user.userId;
 
-    const product = await Product.findOne({ _id: productId, seller: sellerId });
+    const product = await productModel.findOne({ _id: productId, seller: sellerId });
     if (!product) {
       res
         .status(STATUS_CODES.NOT_FOUND)

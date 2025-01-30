@@ -4,6 +4,7 @@ import cors from "cors";
 import connectDB from "./config/mongoDB";
 import AppRouter from "./app.routers";
 import { errorHandler } from "./middleware/eroorMiddleware";
+
 dotenv.config();
 
 export interface CustomRequest extends Request {
