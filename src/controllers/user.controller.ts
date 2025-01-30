@@ -14,8 +14,8 @@ export const registerUser = async ( req : Request , res : Response):Promise<void
         await user.save()
         res.status(STATUS_CODES.CREATED).json({message: "User Registered Successfully"})
 
-    } catch (error:any) {
-        res.status(STATUS_CODES.BAD_REQUEST).json ({error: error.message})
+    } catch (error) {
+        res.status(STATUS_CODES.BAD_REQUEST).json ({error: (error as Error).message})
     }
 }
 
@@ -42,8 +42,8 @@ export const registerUser = async ( req : Request , res : Response):Promise<void
         const token = jwt.sign ({userId:user._id , role:user.role} , process.env.JWT_SECRET ! , {
             expiresIn:'1h'})
             res.json({token})
-    } catch (error:any) {
-        res.status(STATUS_CODES.BAD_REQUEST).json({error: error.message})
+    } catch (error) {
+        res.status(STATUS_CODES.BAD_REQUEST).json({error: (error as Error).message})
         
     }
 }

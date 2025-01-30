@@ -1,9 +1,9 @@
 import Product from "../models/product.model";
 
-export const addProduct = async (sellerId: string, name: string, price: number, description: string) => {
-  const product = new Product({ name, price, description, seller: sellerId });
-  await product.save();
-  return product;
+export const addProduct = async (sellerId: string, name: string, price: number, description: string ,image:string) => {
+  const newProduct = new Product({ name, price, description, seller: sellerId ,image });
+  return await newProduct.save();
+  
 };
 
 export const editProduct = async (sellerId: string, productId: string, name?: string, price?: number, description?: string) => {

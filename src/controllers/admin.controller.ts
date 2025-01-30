@@ -30,7 +30,7 @@ export const deleteAdmin = async (req: Request, res: Response): Promise<void> =>
     user.role = 'user';
     await user.save();
     res.json({ message: 'User demoted from admin successfully' });
-  } catch (error: any) {
-    res.status(400).json({ error: error.message });
+  } catch (error) {
+    res.status(400).json({ error: (error as Error).message });
   }
 };

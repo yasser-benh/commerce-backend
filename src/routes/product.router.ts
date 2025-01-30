@@ -1,4 +1,4 @@
-import express, { Request, Response, NextFunction } from "express";
+import express from "express";
 import { authMiddleware } from "../middleware/authMiddleware";
 import {
   addProductController,
@@ -6,45 +6,18 @@ import {
   deleteProductController,
   getProducts,
 } from "../controllers/product.controller";
+import { upload } from "../middleware/upload";
 
-const router = express.Router();
 
-router.post(
-  "/add",
-  authMiddleware(["seller"]),
-  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {
-      await addProductController(req, res);
-    } catch (error) {
-      next(error);
-    }
-  }
-);
+const productRoutes = express.Router();
 
-router.put(
-  "/edit/:productId",
-  authMiddleware(["seller"]),
-  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {
-      await editProductController(req, res);
-    } catch (error) {
-      next(error);
-    }
-  }
-);
+productRoutes.post('/add' , authMiddleware(['seller']),upload.single("image"), addProductController);
+productRoutes.put('/edit/:productId' , authMiddleware(['seller']), editProductController);
+productRoutes.delete('/delete/:id' , authMiddleware(['seller' , 'admin']), deleteProductController);
+  
 
-router.delete(
-  "/delete/:productId",
-  authMiddleware(["admin", "seller"]),
-  async (req: Request, res: Response, next: NextFunction): Promise<void> => {
-    try {
-      await deleteProductController(req, res);
-    } catch (error) {
-      next(error);
-    }
-  }
-);
 
-router.get("/", getProducts);
 
-export default router;
+productRoutes.get("/", getProducts);
+
+export default productRoutes;
