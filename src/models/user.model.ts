@@ -13,6 +13,7 @@ const UserSchema: Schema = new Schema(
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     role: { type: String, enum: ['user', 'seller', 'admin'], default: 'user' },
+    profileImage: { type: String, default: 'default_image_url' },
   },
   { timestamps: true }
 );

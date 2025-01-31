@@ -6,10 +6,12 @@ import {
   deleteProductController,
   getProducts,
 } from "../controllers/product.controller";
-import { upload } from "../middleware/upload";
+
+import multer from "multer";
 
 
 const productRoutes = express.Router();
+const upload = multer({ dest: 'uploads/' });
 
 productRoutes.post('/add' , authMiddleware(['seller']),upload.single("image"), addProductController);
 productRoutes.put('/edit/:productId' , authMiddleware(['seller']), editProductController);

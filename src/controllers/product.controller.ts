@@ -1,28 +1,37 @@
 import { Request, Response } from "express";
-import {
-  addProduct,
-} from "../services/product.service";
+
 import { STATUS_CODES } from "../constants/STATUS_CODES";
 import Product from "../models/product.model";
 import productModel from "../models/product.model";
+import { productSchema } from "../schema/product.schema";
+import { uploadImage } from "../services/cloudinary.service";
 
-export const addProductController = async (req: Request, res: Response): Promise<void> => {
+export const addProductController = async (req: Request, res: Response) => {
   try {
-    console.log( "test" ,req.user , req.file);
-    if (!req.user) {
-      res.status(STATUS_CODES.UNAUTHORIZED).json({ message: "Unauthorized" });
-      return;
+    const { name, description, price, category, stock, sellerId } = productSchema.parse(req.body);
+    const file = req.file?.path;
+
+    let image = 'default_product_image_url';
+    if (file) {
+      const result = await uploadImage(file);
+      image = result.secure_url;
     }
 
-    const { name, price, description } = req.body;
-    const image = req.file ? `/uploads/${req.file.filename}` : "";
-    const sellerId = (req as any).user.userId;
+    const product = new Product({
+      name,
+      description,
+      price,
+      category,
+      stock,
+      image,
+      sellerId,
+    });
 
-    const product = await addProduct(sellerId, name, price, description, image);
+    await product.save();
 
-    res.status(STATUS_CODES.CREATED).json({ message: "Product added successfully", product });
-  } catch (error: any) {
-    res.status(STATUS_CODES.BAD_REQUEST).json({ error: error.message });
+    res.status(STATUS_CODES.CREATED).json({ message: 'Product created successfully', product });
+  } catch (error) {
+    res.status(STATUS_CODES.BAD_REQUEST).json({ message: 'Product creation failed', error });
   }
 };
 
@@ -99,7 +108,7 @@ export const getProducts = async (req: Request, res: Response) => {
     const skip = (page - 1) * limit;
 
     const products = await Product.find()
-      .populate("seller", "username")
+      .populate("seller")
       .skip(skip)
       .limit(limit);
     const totalProducts = await Product.countDocuments();
